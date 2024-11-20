@@ -1,8 +1,8 @@
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
-player_pos = pygame.Vector2(400, 300)
+screen = pygame.display.set_mode((1700, 1000))
+player_pos = pygame.Vector2(850, 500)
 player_size = 10
 clock = pygame.time.Clock()
 running = True
