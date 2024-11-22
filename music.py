@@ -10,14 +10,12 @@ screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Memory Card Game")
 
-# Colors
-WHITE = (255, 255, 255)
+# Colors (optional, for background)
 BLACK = (0, 0, 0)
-GREY = (200, 200, 200)
 
 # Card class to represent each card on the board
 class Card:
-    def __init__(self, x, y, number):
+    def __init__(self, x, y, number, img_dict):
         self.x = x
         self.y = y
         self.width = 100
@@ -25,35 +23,49 @@ class Card:
         self.number = number
         self.flipped = False
         self.matched = False
+        self.img_dict = img_dict  # Dictionary of card images
+        self.card_image = self.img_dict[number]  # Select the image for this card
 
     def draw(self, surface):
         if self.flipped or self.matched:
-            pygame.draw.rect(surface, WHITE, (self.x, self.y, self.width, self.height))
-            font = pygame.font.SysFont(None, 48)
-            text = font.render(str(self.number), True, BLACK)
-            text_rect = text.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
-            surface.blit(text, text_rect)
+            # If flipped or matched, display the card's image
+            surface.blit(self.card_image, (self.x, self.y))
         else:
-            pygame.draw.rect(surface, GREY, (self.x, self.y, self.width, self.height))
+            # Display the back of the card
+            surface.blit(self.img_dict["back"], (self.x, self.y))
 
     def check_click(self, pos):
         if self.x < pos[0] < self.x + self.width and self.y < pos[1] < self.y + self.height:
             return True
         return False
 
+# Set up the card images
+def load_images():
+    img_dict = {}
+    # Load the back card image
+    image = pygame.image.load("card_back.png").convert_alpha()
+
+
+    # Load images for the card faces
+    for i in range(1, 9):
+        image = pygame.image.load("card1.png")
+
+    return img_dict
+
 # Set up the cards
-def create_deck():
+def create_deck(img_dict):
     numbers = list(range(1, 9)) * 2  # Create pairs of 1-8
     random.shuffle(numbers)
     cards = []
     for i in range(4):  # 4 rows
         for j in range(4):  # 4 columns
-            card = Card(j * 120 + 50, i * 120 + 50, numbers.pop())
+            card = Card(j * 120 + 50, i * 120 + 50, numbers.pop(), img_dict)
             cards.append(card)
     return cards
 
 def main():
-    cards = create_deck()
+    img_dict = load_images()  # Load all images
+    cards = create_deck(img_dict)  # Create the deck of cards
     flipped_cards = []  # List to hold flipped cards
     matched_pairs = 0
     game_over = False
@@ -81,7 +93,7 @@ def main():
                         flipped_cards[1].matched = True
                         matched_pairs += 1
                     # Pause for a moment to let the player see the result
-                    pygame.time.delay(50)
+                    pygame.time.delay(500)
                     # Flip back unmatched cards
                     for card in flipped_cards:
                         if not card.matched:
@@ -95,7 +107,7 @@ def main():
         # Check if all pairs are matched
         if matched_pairs == len(cards) // 2:
             font = pygame.font.SysFont(None, 48)
-            text = font.render("You Win!", True, WHITE)
+            text = font.render("You Win!", True, (255, 255, 255))
             screen.blit(text, (screen_width // 2 - text.get_width() // 2, screen_height // 2))
 
         pygame.display.flip()
