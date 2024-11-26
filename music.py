@@ -3,7 +3,7 @@ import random
 import time
 import json
 pygame.init()
-Width, Height = 1300, 700
+Width, Height = 1700, 1000
 screen = pygame.display.set_mode((Width, Height))
 pygame.display.set_caption("Memory Card Game")
 card_margin = 20
@@ -16,7 +16,7 @@ cards = json.load(test)
 random.shuffle(cards)
 flipped_cards = []
 matched_cards = []
-font = pygame.font.SysFont(None, 40)
+font = pygame.font.SysFont('comic sans', 40)
 running = True
 
 def draw_board():
